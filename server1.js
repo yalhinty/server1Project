@@ -9,9 +9,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const Pool = require("pg").Pool;
 const config = {
 	host: "localhost",
-	user: "server1",
+	user: "postgres",
 	password: "Yessie97",
-	database: "server1"
+	database: "postgres"
 };
 
 const pool = new Pool(config);
@@ -45,7 +45,7 @@ app.get("/api", async (req, res) => {
 	try {
 	  if (req.query.workshop) {
 	
-		const template = "SELECT * FROM workshops WHERE workshop = $1";
+		const template = "SELECT * FROM workshop WHERE workshop = $1";
 		const response = await pool.query(template, [req.query.workshop]);
 	
 		if (response.rowCount == 0) {
@@ -54,23 +54,24 @@ app.get("/api", async (req, res) => {
 			const workshops = response.rows.map(function(item) {
 			return item.workshop;
 		});
-//			res.json({ status: "ok", attendees: response.rows[0] });
+			res.json({ status: "ok", attendees: workshops.rows[0] });
 
 
-			res.json({attendees: workshops.row[0] });
+//			res.json({attendees: workshops.row[0] });
 		}
 	} else {
-		const template = "SELECT distinct workshop FROM workshops";
+		console.log("In the else")
+		const template = "SELECT distinct workshop FROM workshop";
 		const response = await pool.query(template);
-		res.json({attendees: workshops.rows[0] });
-		}
+		res.json({attendees: response.rows[0] });
+		console.log("end of else")}
 	} catch (err) {
 		console.error("Error running query " + err);
 		res.json({ status: "error in get" });
 	}
 });
 	app.listen(app.get("port"), () => {
-        console.log("it wooooorks")
+        console.log("running")
 });
 
 
