@@ -35,7 +35,7 @@ app.post("/api", async (req, res) => {
 		}
 	} catch (err) {
 		console.error("Error running query " + err);
-		res.json({error: "Error"});
+		res.json({error: "Error in post"});
 		      }
 			
 	});
@@ -43,12 +43,13 @@ app.post("/api", async (req, res) => {
 
 app.get("/api", async (req, res) => {
 	try {
-		if (req.query.workshop) {
+	  if (req.query.workshop) {
 	
 		const template = "SELECT * FROM workshops WHERE workshop = $1";
 		const response = await pool.query(template, [req.query.workshop]);
+	
 		if (response.rowCount == 0) {
-			res.json({ status: "not found", searchTerm: req.query.q });
+			res.json({ status: "not found", searchTerm: req.query.workshop });
 		} else {
 			const workshops = response.rows.map(function(item) {
 			return item.workshop;
@@ -62,10 +63,10 @@ app.get("/api", async (req, res) => {
 		const template = "SELECT distinct workshop FROM workshops";
 		const response = await pool.query(template);
 		res.json({attendees: workshops.rows[0] });
-	}
-		} catch (err) {
+		}
+	} catch (err) {
 		console.error("Error running query " + err);
-		res.json({ status: "error" });
+		res.json({ status: "error in get" });
 	}
 });
 	app.listen(app.get("port"), () => {
